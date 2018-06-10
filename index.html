@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../giphy/assets/css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <title>Giphy Homework</title>
+</head>
+<body>
+    
+    <div class="container">
+        <div><h2>Find your favorite Gifs.</h2></div><br>
+        <div id="buttons-view"></div>
+
+        <form id="gifSelect"><br>
+            <input type="text" id="gifName"><br>
+
+            <input type="button" id="addGif" value="Add to the list" style="margin: 15px">
+            <input type="button" id="removeGif" value="Remove from the list" style="margin: 20px">
+            <input type="button" id="clearPage" value="Clear the page">
+        </form>
+        
+        <div id="gifsGoHere">
+
+        </div>
+
+        <script type="text/javascript">
+            let topics = ["cooking", "computers", "basketball", "football", "cycling", "pit bulls", "cats"];
+            // let search = "";
+            // let queryURL = "";
+    
+            function renderButtons (){
+    
+                $("#buttons-view").empty();
+
+                for (let i = 0; i < topics.length; i++){
+                    let a = $("<button>");
+                    a.addClass("topic");
+                    a.addClass("btn btn-secondary");
+                    a.css("margin-right", '20px')
+                    a.attr("topic-name", topics[i]);
+                    a.text(topics[i]);
+                    $("#buttons-view").append(a);
+                    console.log(topics[i]);   
+                }
+    
+            };
+
+            
+            function displayGifs () {
+                    let topic = $(this).attr("topic-name");
+                    let queryURL = "http://api.giphy.com/v1/gifs/search?q=" + topic + "&api_key=Kz4SX5BeKQ7qiiaKzFK8RSuGMofAPFIX&limit=20";
+
+                $.ajax({
+                    url: queryURL,
+                    method: 'GET'
+                }).then(function(response){
+                    console.log(response);
+                    for (i = 0; i < response.data.length; i++) {
+                        let b = $('<div>');
+                            b.css('padding-right', '20px');
+                        b.text("Rating: " + response.data[i].rating);
+                            $('#gifsGoHere').prepend(b);
+                        let image = $('<img>');
+                        image.attr('src', response.data[i].images.original_still.url);
+                        image.attr('data-state', 'still');
+                        image.addClass('gif');
+                        image.addClass('row align-items-center');
+                        image.addClass('row justify-content-center')
+                        image.addClass('col-sm-4');
+                        image.attr('data-still', response.data[i].images.original_still.url);
+                        image.attr('data-animate', response.data[i].images.original.url);
+                        $('#gifsGoHere').prepend(image);
+                        $('#gifsGoHere').prepend(b);
+                    };
+                });
+            };
+            renderButtons();
+
+            $(document).on("click", ".topic", displayGifs);
+
+            $("#addGif").on("click", function(event){
+                let newTopic = $("#gifName").val().trim();
+                topics.push(newTopic);
+                renderButtons();
+            });
+
+            $("#removeGif").on("click", function(event){
+                topics.pop();
+                renderButtons();
+            })
+            
+            $(document).on("click", ".gif", function() {
+            var state = $(this).attr("data-state");
+            if (state === "still") {
+                $(this).attr("src", $(this).attr("data-animate"));
+                $(this).attr("data-state", "animate");
+            } else {
+                $(this).attr("src", $(this).attr("data-still"));
+                $(this).attr("data-state", "still");
+            }
+            });
+
+            $(document).on("click", "#clearPage", function(){
+                $('#gifsGoHere').html(" ");
+            });
+
+        </script>
+    </div>
+    
+    
+</body>
+</html>
