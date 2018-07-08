@@ -63,7 +63,7 @@
                     for (i = 0; i < response.data.length; i++) {
                         let b = $('<div>');
                             b.css('padding-right', '20px');
-                        b.text("Rating: " + response.data[i].rating);
+                        b.text("Rating: " + response.data[i].rating).css('color', 'black').css('font-size', '14px');
                             $('#gifsGoHere').prepend(b);
                         let image = $('<img>');
                         image.attr('src', response.data[i].images.original_still.url);
@@ -84,9 +84,14 @@
             $(document).on("click", ".topic", displayGifs);
 
             $("#addGif").on("click", function(event){
+                if ($('#gifName').val() == "") {
+                    $('#gifsGoHere').html("Please enter something in the text box!").css('color', 'red').css('font-size', '40px');
+                } else {
+                $('#gifsGoHere').html(" ").css('color', 'black').css('font-size', '14px');
                 let newTopic = $("#gifName").val().trim();
                 topics.push(newTopic);
                 renderButtons();
+                }
             });
 
             $("#removeGif").on("click", function(event){
